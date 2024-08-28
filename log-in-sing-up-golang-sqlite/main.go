@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
@@ -28,15 +27,8 @@ func main() {
 		c.HTML(200, "sing-up.html", gin.H{})
 	})
 
-	r.POST("/sign-in", signIn)
-
-	r.POST("/sign-up", func(c *gin.Context) {
-		email := c.PostForm("email")
-		password := c.PostForm("password")
-		hashing(password)
-		database(email, HashedPass)
-		c.HTML(200, "sing-up.html", gin.H{})
-	})
+	r.POST("/sign-up", signUp)
+	r.POST("/sign-in", singIn)
 
 	if err := r.Run(); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
@@ -55,31 +47,7 @@ func hashing(password string) {
 	HashedPass = string(hash)
 }
 
-func database(email, hashedPass string) {
-	db, err := sql.Open("sqlite3", "./data.db")
-	if err != nil {
-		log.Fatalf("Error opening database: %v", err)
-	}
-	defer db.Close()
-
-	// Create table if not exists
-	statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, email TEXT, password TEXT)")
-	if err != nil {
-		log.Fatalf("Error preparing statement: %v", err)
-	}
-	_, err = statement.Exec()
-	if err != nil {
-		log.Fatalf("Error executing statement: %v", err)
-	}
-
-	// Insert user into the database
-	_, err = db.Exec("INSERT INTO users (email, password) VALUES (?, ?)", email, hashedPass)
-	if err != nil {
-		log.Fatalf("Error inserting user into database: %v", err)
-	}
-}
-
-func signIn(c *gin.Context) {
+func signUp(c *gin.Context) {
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 	hashing(password)
@@ -89,7 +57,20 @@ func signIn(c *gin.Context) {
 	}
 	return
 
-	c.HTML(http.StatusOK, "sing-in.html", gin.H{
+	c.HTML(http.StatusOK, "sing-up.html", gin.H{
 		"Success": "Data saved succesfuly",
 	})
+}
+func singIn(c *gin.Context) {
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+	hashing(password)
+	getData(email, HashedPass)
+	if result == 1 {
+		http.Redirect(c.Writer, c.Request, "/", 302)
+	} else {
+		http.Redirect(c.Writer, c.Request, "/", 302)
+	}
+	return
+	c.HTML(http.StatusOK, "sing-in.html", gin.H{})
 }
