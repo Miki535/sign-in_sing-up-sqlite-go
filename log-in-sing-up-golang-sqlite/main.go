@@ -26,10 +26,10 @@ func main() {
 	})
 
 	r.POST("/sign-in", func(c *gin.Context) {
-		//email := c.PostForm("email")
+		email := c.PostForm("email")
 		password := c.PostForm("password")
 		hashing(password)
-		//fmt.Println("\n", email, "\n", HashedPass, "not hashed pass:", password)
+		database("./data.db", email, HashedPass)
 		c.HTML(200, "sing-in.html", gin.H{})
 	})
 
