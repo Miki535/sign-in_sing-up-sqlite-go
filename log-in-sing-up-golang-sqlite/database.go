@@ -6,35 +6,34 @@ import (
 	"log"
 )
 
-func database(dbName, email, password string) {
-	// Відкриваємо базу даних
-	database, err := sql.Open("sqlite3", dbName)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer database.Close()
+var db *sql.DB
 
-	// Створюємо таблицю, якщо вона не існує
-	statement, err := database.Prepare("CREATE TABLE IF NOT EXISTS people (id INTEGER PRIMARY KEY, email TEXT, password TEXT)")
+func init() {
+	var err error
+	db, err = sql.Open("sqlite3", "./data.db")
 	if err != nil {
-		log.Fatal(err)
-	}
-	defer statement.Close()
-
-	_, err = statement.Exec()
-	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to connect to database:", err)
 	}
 
-	// Вставляємо дані
-	statement, err = database.Prepare("INSERT INTO people (email, password) VALUES (? ,?)")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer statement.Close()
+	createTable()
+}
 
-	_, err = statement.Exec(email, password)
+func createTable() {
+	query := `
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        email TEXT
+    );
+    `
+	_, err := db.Exec(query)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to create table:", err)
 	}
+}
+
+func saveData(name, email string) error {
+	query := `INSERT INTO users (name, email) VALUES (?, ?)`
+	_, err := db.Exec(query, name, email)
+	return err
 }
