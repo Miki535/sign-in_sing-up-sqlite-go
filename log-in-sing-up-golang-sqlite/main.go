@@ -1,9 +1,10 @@
 package main
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
-	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 )
@@ -38,28 +39,19 @@ func main() {
 func hashing(password string) {
 	pass := []byte(password)
 
-	// Hashing the password
-	hash, err := bcrypt.GenerateFromPassword(pass, bcrypt.DefaultCost)
-	if err != nil {
-		log.Println("Error hashing password:", err)
-		return
-	}
-	HashedPass = string(hash)
+	hash := sha256.Sum256(pass)
+	HashedPass = fmt.Sprintf("%x", hash[:])
 }
 
 func signUp(c *gin.Context) {
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 	hashing(password)
-	err := saveData(email, HashedPass)
+	err := saveData(HashedPass, email)
 	if err != nil {
 		log.Fatalf("Error inserting user into database: %v", err)
 	}
-	return
-
-	c.HTML(http.StatusOK, "sing-up.html", gin.H{
-		"Success": "Data saved succesfuly",
-	})
+	c.HTML(http.StatusOK, "sing-up.html", gin.H{})
 }
 func singIn(c *gin.Context) {
 	email := c.PostForm("email")
