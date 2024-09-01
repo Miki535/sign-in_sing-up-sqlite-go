@@ -30,6 +30,9 @@ func main() {
 
 	r.POST("/sign-up", signUp)
 	r.POST("/sign-in", singIn)
+	r.GET("/404", func(c *gin.Context) {
+		c.HTML(200, "404.html", gin.H{})
+	})
 
 	if err := r.Run(); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
@@ -50,6 +53,8 @@ func signUp(c *gin.Context) {
 	err := saveData(HashedPass, email)
 	if err != nil {
 		log.Fatalf("Error inserting user into database: %v", err)
+	} else {
+		http.Redirect(c.Writer, c.Request, "/emailtest", 302)
 	}
 	c.HTML(http.StatusOK, "sing-up.html", gin.H{})
 }
