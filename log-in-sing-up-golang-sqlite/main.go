@@ -53,7 +53,7 @@ func signUp(c *gin.Context) {
 	hashing(password)
 	err := saveData(HashedPass, email)
 	if err != nil {
-		http.Redirect(c.Writer, c.Request, "/404", 302)
+		http.Redirect(c.Writer, c.Request, "/404", 404)
 		log.Fatalf("Error inserting user into database: %v", err)
 	} else {
 		http.Redirect(c.Writer, c.Request, "/testEmail", 302)
@@ -68,7 +68,7 @@ func singIn(c *gin.Context) {
 	if result == 1 {
 		http.Redirect(c.Writer, c.Request, "/", 302)
 	} else {
-		http.Redirect(c.Writer, c.Request, "/", 302)
+		http.Redirect(c.Writer, c.Request, "/sign-up", 302)
 	}
 	return
 	c.HTML(http.StatusOK, "sing-in.html", gin.H{})

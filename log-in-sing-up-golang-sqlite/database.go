@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 )
@@ -41,6 +42,6 @@ func saveData(password, email string) error {
 func getData(email string, password string) {
 	err := db.QueryRow("SELECT 1 FROM users WHERE email = ? AND password = ?", email, password).Scan(&result)
 	if err != nil {
-		log.Fatal("Failed to get data:", err)
+		fmt.Println(err)
 	}
 }
