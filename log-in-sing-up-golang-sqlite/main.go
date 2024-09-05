@@ -7,6 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 var HashedPass string
@@ -51,6 +52,11 @@ func signUp(c *gin.Context) {
 	password := c.PostForm("password")
 	if email != "" {
 		SendTestCode(email)
+		trestt := c.PostForm("saveCodeBtn")
+		ttt, _ := strconv.Atoi(trestt)
+		if ttt == TestCode {
+
+		}
 	} else {
 	}
 	hashing(password)
