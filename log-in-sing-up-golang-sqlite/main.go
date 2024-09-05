@@ -28,7 +28,6 @@ func main() {
 	r.GET("/sign-up", func(c *gin.Context) {
 		c.HTML(200, "sing-up.html", gin.H{})
 	})
-	r.GET("/testEmail", emailTest)
 	r.POST("/sign-up", signUp)
 	r.POST("/sign-in", singIn)
 	r.GET("/404", func(c *gin.Context) {
@@ -50,14 +49,17 @@ func hashing(password string) {
 func signUp(c *gin.Context) {
 	email = c.PostForm("email")
 	password := c.PostForm("password")
+	if email != "" {
+		SendTestCode(email)
+	} else {
+	}
 	hashing(password)
 	err := saveData(HashedPass, email)
 	if err != nil {
 		http.Redirect(c.Writer, c.Request, "/404", 404)
 		log.Fatalf("Error inserting user into database: %v", err)
-	} else {
-		http.Redirect(c.Writer, c.Request, "/testEmail", 302)
 	}
+
 	c.HTML(http.StatusOK, "sing-up.html", gin.H{})
 }
 func singIn(c *gin.Context) {
@@ -72,9 +74,4 @@ func singIn(c *gin.Context) {
 	}
 	return
 	c.HTML(http.StatusOK, "sing-in.html", gin.H{})
-}
-
-func emailTest(c *gin.Context) {
-	SendTestCode(email)
-	c.HTML(200, "emailTest.html", gin.H{})
 }
