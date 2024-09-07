@@ -3,170 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+    <title>Email Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .button {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            background: #007bff;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 1rem;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-    <div class="form">
-        <div class="title">Sign Up</div>
-        <form id="myForm" action="/sign-up" method="POST">
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            </div>
-            <button class="button" id="showPopupBtn" type="button">Sign Up</button>
-        </form>
-        <div class="toggle">
-            <span>Already have an account? <a href="/sign-in">Sign In</a></span>
-        </div>
-    </div>
+    <form id="emailForm" action="/sign-up" method="POST">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Pass:</label>
+            <input type="text" id="password" name="password" required>
+        <button type="submit" class="button">Send Confirmation Email</button>
+    </form>
 </div>
-
-<div id="popup" class="hidden">
-    <div class="popup">
-        <input type="password" id="secretCode" class="input-field" name="secretCode" placeholder="Enter secret code from you email">
-        <button class="button2" id="saveCodeBtn">Submit</button>
-    </div>
-</div>
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f0f0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-    }
-
-    .container {
-        background-color: #fff;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 400px;
-    }
-
-    .title {
-        font-size: 24px;
-        margin-bottom: 1rem;
-        text-align: center;
-    }
-
-    .form-group {
-        margin-bottom: 1rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-
-    .form-group input {
-        width: 100%;
-        padding: 0.8rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-
-    .form-group input:focus {
-        border-color: #007bff;
-        outline: none;
-    }
-
-    .button {
-        width: 100%;
-        padding: 0.8rem;
-        border: none;
-        border-radius: 4px;
-        color: #fff;
-        background: -webkit-repeating-linear-gradient(-45deg, #71b7e6, #69a6ce, #b98acc, #ee8176, #b98acc);
-        cursor: pointer;
-        font-size: 16px;
-        margin-bottom: 1rem;
-    }
-
-    .button2 {
-        width: 50%;
-        padding: 0.8rem;
-        border: none;
-        border-radius: 4px;
-        color: #fff;
-        background: -webkit-repeating-linear-gradient(-45deg, #71b7e6, #69a6ce, #b98acc, #ee8176, #b98acc);
-        cursor: pointer;
-        font-size: 16px;
-        margin-bottom: 1rem;
-    }
-
-    .button:hover {
-        background-color: #0056b3;
-    }
-
-    .toggle {
-        text-align: center;
-    }
-
-    .toggle a {
-        color: #007bff;
-        text-decoration: none;
-    }
-
-    .toggle a:hover {
-        text-decoration: underline;
-    }
-    body{
-        background: -webkit-repeating-linear-gradient(-45deg, #71b7e6, #69a6ce, #b98acc, #ee8176, #b98acc, #69a6ce, #9b59b6);
-        height: 100vh;
-    }
-    .hidden {
-        display: none;
-    }
-
-    .popup {
-        width: 300px;
-        height: 150px;
-        background-color: #f0f0f0;
-        border-radius: 15px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .input-field {
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        width: 80%;
-    }
-</style>
-<script>
-    const showPopupBtn = document.getElementById('showPopupBtn');
-    const popup = document.getElementById('popup');
-    const saveCodeBtn = document.getElementById('saveCodeBtn');
-    const form = document.getElementById('myForm');
-    let secretCode = '';
-
-    showPopupBtn.addEventListener('click', () => {
-        popup.classList.remove('hidden');
-    });
-
-    saveCodeBtn.addEventListener('click', () => {
-        secretCode = document.getElementById('secretCode').value;
-        popup.classList.add('hidden');
-        console.log('Secret code submited:', secretCode);
-
-        form.submit();
-    });
-</script>
 </body>
 </html>

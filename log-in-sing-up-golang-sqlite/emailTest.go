@@ -4,22 +4,28 @@ import (
 	"fmt"
 	"log"
 	"net/smtp"
+	"net/url"
 )
 
 var TestCode int
 
-func SendTestCode(email string) {
-	secretKey := "secretkey"
-	own_email := "ownemail"
+func SendTestCode(email, Token string) {
+	secretKey := ""
+	ownEmail := "sherbantaras535@gmail.com"
 
-	auth := smtp.PlainAuth("", own_email, secretKey, "smtp.gmail.com")
+	auth := smtp.PlainAuth("", ownEmail, secretKey, "smtp.gmail.com")
 
-	to := []string{email}
-	Randomizer(101, 10001)
-	msg := TestCode
-	// send message on email
-	err := smtp.SendMail("smtp.gmail.com:587", auth, own_email, to, []byte(fmt.Sprint(msg)))
+	confirmationURL := fmt.Sprintf("http://localhost:8080/confirm?token=%s", url.QueryEscape(Token))
+	subject := "Confirm Your Email Address"
+	body := fmt.Sprintf("Click the following link to confirm your email address: <a href='%s'>Confirm Email</a>", confirmationURL)
+	msg := []byte("Subject: " + subject + "\r\n" +
+		"Content-Type: text/html; charset=UTF-8\r\n" +
+		"\r\n" +
+		body + "\r\n")
+
+	err := smtp.SendMail("smtp.gmail.com:587", auth, ownEmail, []string{email}, msg)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 }
