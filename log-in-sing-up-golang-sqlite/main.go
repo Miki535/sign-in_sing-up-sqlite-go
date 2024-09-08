@@ -12,6 +12,7 @@ import (
 
 var HashedPass string
 var email string
+var emailForResetPassword string
 
 func main() {
 	r := gin.Default()
@@ -34,16 +35,17 @@ func main() {
 	r.GET("/404", func(c *gin.Context) {
 		c.HTML(200, "404.html", gin.H{})
 	})
+	r.GET("/resetPassEmail", func(c *gin.Context) {
+		c.HTML(200, "reset-pass-email.html", gin.H{})
+	})
+	r.POST("/resetPassEmail", resetPassEmail)
 	r.GET("/resetPass", func(c *gin.Context) {
 		token := c.Query("token")
 		tokenToINT, _ := strconv.Atoi(token)
 		IfTokenExists(tokenToINT)
-		if TokenCheckedResult == true {
-			c.Redirect(http.StatusMovedPermanently, "/sign-up")
-		} else {
+		if TokenCheckedResult == false {
 			c.Redirect(http.StatusMovedPermanently, "/404")
 		}
-
 		if token != fmt.Sprint(Token) {
 			c.Redirect(302, "/404")
 		}
@@ -98,4 +100,11 @@ func resetPass(c *gin.Context) {
 	hashing(newPassword)
 
 	c.HTML(200, "resetPass.html", gin.H{})
+}
+
+func resetPassEmail(c *gin.Context) {
+	emailForResetPassword = c.PostForm("email")
+	Tokenizator()
+	AlertOnEmail(emailForResetPassword)
+	c.HTML(200, "reset-pass-email.html", gin.H{})
 }
