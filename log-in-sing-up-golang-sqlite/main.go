@@ -11,8 +11,6 @@ import (
 
 var HashedPass string
 var email string
-var token string
-var paSS string
 
 func main() {
 	r := gin.Default()
@@ -35,22 +33,23 @@ func main() {
 	r.GET("/404", func(c *gin.Context) {
 		c.HTML(200, "404.html", gin.H{})
 	})
-	r.GET("/confirm", func(c *gin.Context) {
-		token = c.Query("token")
+	r.GET("/resetPass", func(c *gin.Context) {
+		token := c.Query("token")
 		if token == "" {
 			c.JSON(400, gin.H{"error": "Token is required"})
 			return
 		}
-		if token == paSS {
-			c.Redirect(302, "/")
-		} else {
-			c.JSON(400, gin.H{"error": "Invalid token"})
+		saveToken()
+		if token != fmt.Sprint(Token) {
+			c.Redirect(302, "/404")
 		}
 
-		c.HTML(200, "confirm.html", gin.H{
+		c.HTML(200, "resetPass.html", gin.H{
 			"token": token,
 		})
 	})
+
+	r.POST("/resetPass", resetPass)
 
 	if err := r.Run(); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
@@ -66,10 +65,13 @@ func hashing(password string) {
 
 func signUp(c *gin.Context) {
 	email = c.PostForm("email")
-	paSS = c.PostForm("password")
-	if email != "" {
-		SendTestCode(email, paSS)
+	password := c.PostForm("password")
+	hashing(password)
+	err := saveData(HashedPass, email)
+	if err != nil {
+		fmt.Errorf("Error saving data: %v", err)
 	}
+	AlertOnEmail(email)
 	c.HTML(http.StatusOK, "sing-up.html", gin.H{})
 }
 func singIn(c *gin.Context) {
@@ -84,4 +86,11 @@ func singIn(c *gin.Context) {
 	}
 	return
 	c.HTML(http.StatusOK, "sing-in.html", gin.H{})
+}
+
+func resetPass(c *gin.Context) {
+	newPassword := c.PostForm("newPassword")
+	hashing(newPassword)
+
+	c.HTML(200, "resetPass.html", gin.H{})
 }

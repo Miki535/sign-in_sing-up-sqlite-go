@@ -19,6 +19,15 @@ func init() {
 	createTable()
 }
 
+func init() {
+	var err error
+	db, err = sql.Open("sqlite3", "./tokens.db")
+	if err != nil {
+		log.Fatal("Failed to connect to database:", err)
+	}
+	createTokenTablet()
+}
+
 func createTable() {
 	query := `
     CREATE TABLE IF NOT EXISTS users (
@@ -44,4 +53,25 @@ func getData(email string, password string) {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func resetPassword(email string, password string) {
+
+}
+func createTokenTablet() {
+	query := `
+    CREATE TABLE IF NOT EXISTS tokens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        tokens 	INTEGER
+    );
+    `
+	_, err := db.Exec(query)
+	if err != nil {
+		log.Fatal("Failed to create tokens table:", err)
+	}
+}
+func saveToken() error {
+	query := `INSERT INTO tokens (tokens) VALUES (?)`
+	_, err := db.Exec(query, Token)
+	return err
 }

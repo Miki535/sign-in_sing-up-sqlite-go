@@ -7,15 +7,13 @@ import (
 	"net/url"
 )
 
-var TestCode int
-
-func SendTestCode(email, Token string) {
-	secretKey := ""
+func AlertOnEmail(email string) {
+	secretKey := "uane nfkg zomc dtii"
 	ownEmail := "sherbantaras535@gmail.com"
 
 	auth := smtp.PlainAuth("", ownEmail, secretKey, "smtp.gmail.com")
-
-	confirmationURL := fmt.Sprintf("http://localhost:8080/confirm?token=%s", url.QueryEscape(Token))
+	Tokenizator()
+	confirmationURL := fmt.Sprintf("http://localhost:8080/resetPass?token=%s", url.QueryEscape(fmt.Sprint(Token)))
 	subject := "Confirm Your Email Address"
 	body := fmt.Sprintf("Click the following link to confirm your email address: <a href='%s'>Confirm Email</a>", confirmationURL)
 	msg := []byte("Subject: " + subject + "\r\n" +
