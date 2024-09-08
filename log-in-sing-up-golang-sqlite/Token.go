@@ -9,8 +9,8 @@ import (
 var Token int64
 
 func Tokenizator() {
-	min := int64(100000000000000000000)
-	max := int64(999999999999999999999)
+	min := int64(10000000000000000)
+	max := int64(99999999999999999)
 
 	rangeSize := max - min
 
@@ -23,4 +23,5 @@ func Tokenizator() {
 	}
 
 	Token = randNum.Int64() + min
+	saveToken()
 }

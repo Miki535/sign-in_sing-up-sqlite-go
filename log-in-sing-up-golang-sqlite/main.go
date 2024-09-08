@@ -7,6 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 var HashedPass string
@@ -35,11 +36,14 @@ func main() {
 	})
 	r.GET("/resetPass", func(c *gin.Context) {
 		token := c.Query("token")
-		if token == "" {
-			c.JSON(400, gin.H{"error": "Token is required"})
-			return
+		tokenToINT, _ := strconv.Atoi(token)
+		IfTokenExists(tokenToINT)
+		if TokenCheckedResult == true {
+			c.Redirect(http.StatusMovedPermanently, "/sign-up")
+		} else {
+			c.Redirect(http.StatusMovedPermanently, "/404")
 		}
-		saveToken()
+
 		if token != fmt.Sprint(Token) {
 			c.Redirect(302, "/404")
 		}
@@ -71,6 +75,7 @@ func signUp(c *gin.Context) {
 	if err != nil {
 		fmt.Errorf("Error saving data: %v", err)
 	}
+	Tokenizator()
 	AlertOnEmail(email)
 	c.HTML(http.StatusOK, "sing-up.html", gin.H{})
 }

@@ -8,11 +8,10 @@ import (
 )
 
 func AlertOnEmail(email string) {
-	secretKey := "uane nfkg zomc dtii"
+	secretKey := ""
 	ownEmail := "sherbantaras535@gmail.com"
 
 	auth := smtp.PlainAuth("", ownEmail, secretKey, "smtp.gmail.com")
-	Tokenizator()
 	confirmationURL := fmt.Sprintf("http://localhost:8080/resetPass?token=%s", url.QueryEscape(fmt.Sprint(Token)))
 	subject := "Confirm Your Email Address"
 	body := fmt.Sprintf("Click the following link to confirm your email address: <a href='%s'>Confirm Email</a>", confirmationURL)

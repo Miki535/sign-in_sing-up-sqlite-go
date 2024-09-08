@@ -9,6 +9,7 @@ import (
 
 var db *sql.DB
 var result int
+var TokenCheckedResult bool
 
 func init() {
 	var err error
@@ -25,7 +26,7 @@ func init() {
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
-	createTokenTablet()
+	createTokenTable()
 }
 
 func createTable() {
@@ -58,11 +59,12 @@ func getData(email string, password string) {
 func resetPassword(email string, password string) {
 
 }
-func createTokenTablet() {
+func createTokenTable() {
 	query := `
     CREATE TABLE IF NOT EXISTS tokens (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        tokens 	INTEGER
+        tokens INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     `
 	_, err := db.Exec(query)
@@ -70,8 +72,28 @@ func createTokenTablet() {
 		log.Fatal("Failed to create tokens table:", err)
 	}
 }
+
 func saveToken() error {
-	query := `INSERT INTO tokens (tokens) VALUES (?)`
-	_, err := db.Exec(query, Token)
-	return err
+	insertQuery := `INSERT INTO tokens (tokens, created_at) VALUES (?, datetime('now'))`
+	_, err := db.Exec(insertQuery, Token)
+	if err != nil {
+		log.Println("Error saving token:", err)
+		return err
+	}
+
+	deleteQuery := `DELETE FROM tokens WHERE created_at < datetime('now', '-2 minutes')`
+	_, err = db.Exec(deleteQuery)
+	if err != nil {
+		log.Println("Error deleting old tokens:", err)
+		return err
+	}
+
+	return nil
+}
+func IfTokenExists(token int) {
+	query := `SELECT EXISTS(SELECT 1 FROM tokens WHERE tokens = ? LIMIT 1)`
+	err := db.QueryRow(query, token).Scan(&TokenCheckedResult)
+	if err != nil && err != sql.ErrNoRows {
+		log.Fatalf("Error checking token: %v", err)
+	}
 }
