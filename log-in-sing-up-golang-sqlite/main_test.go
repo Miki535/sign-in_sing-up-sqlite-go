@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -100,4 +102,52 @@ func TestGetSingUp(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	assert.Contains(t, w.Body.String(), "Sign Up")
+}
+
+func TestPostResetPass1(t *testing.T) {
+	router := setupRouter()
+
+	req, _ := http.NewRequest("POST", "/resetPassEmail", nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	assert.Contains(t, w.Body.String(), "Reset password")
+}
+
+func TestPostSingInWithValidData(t *testing.T) {
+	router := setupRouter()
+
+	form := url.Values{}
+	form.Add("email", "sherbantaras535@gmail.com")
+	form.Add("password", "")
+
+	req, _ := http.NewRequest("POST", "/sing-in", strings.NewReader(form.Encode()))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	w := httptest.NewRecorder()
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	assert.Contains(t, w.Body.String(), "Welcome")
+}
+
+func TestPostSingInWithNonValidData(t *testing.T) {
+	router := setupRouter()
+
+	form := url.Values{}
+	form.Add("email", "sherbantaras@gmail.com")
+	form.Add("password", "incorectpassword")
+
+	req, _ := http.NewRequest("POST", "/sign-in", strings.NewReader(form.Encode()))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	w := httptest.NewRecorder()
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	assert.Contains(t, w.Body.String(), "Sign In")
 }

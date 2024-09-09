@@ -76,9 +76,11 @@ func signUp(c *gin.Context) {
 	err := saveData(HashedPass, email)
 	if err != nil {
 		fmt.Errorf("Error saving data: %v", err)
+	} else {
+		Tokenizator()
+		AlertOnEmail(email)
 	}
-	Tokenizator()
-	AlertOnEmail(email)
+
 	c.HTML(http.StatusOK, "sing-up.html", gin.H{})
 }
 func singIn(c *gin.Context) {
@@ -89,7 +91,7 @@ func singIn(c *gin.Context) {
 	if result == 1 {
 		http.Redirect(c.Writer, c.Request, "/", 302)
 	} else {
-		http.Redirect(c.Writer, c.Request, "/sign-up", 302)
+		return
 	}
 	return
 	c.HTML(http.StatusOK, "sing-in.html", gin.H{})
